@@ -39,8 +39,9 @@ struct game_t *init_game(int height, int width)
 }
 
 enum form_t get_random_form()
-{
-    return rand() % 5;
+{   int res = rand() % 6;
+    if (res == 5) return V; // Pour éviter de générer NONE comme forme
+    return (enum form_t)res;
 }
 
 

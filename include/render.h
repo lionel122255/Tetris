@@ -20,6 +20,8 @@ struct render_t {
     SDL_Texture *blue;
     SDL_Texture *yellow;
     SDL_Texture *black;
+    SDL_Texture *hud_bg;
+    SDL_Texture *grid_bg;
    
 
     TTF_Font *font;

@@ -65,6 +65,8 @@ struct render_t *render_create(const char *title, int width, int height){
     render->red = load_img_texture(render , "./ressource/red.png");
     render->yellow = load_img_texture(render , "./ressource/yellow.png");
     render->green = load_img_texture(render , "./ressource/green.png");
+    render->hud_bg = load_img_texture(render, "./ressource/hud.png");
+    render->grid_bg = load_img_texture(render, "./ressource/grid.png");
     
     
     render->font = TTF_OpenFont("./ressource/PixelOperator.ttf",24);
@@ -82,8 +84,8 @@ static void render_text_no_win(struct render_t * render ,struct game_t * game){
     char score[100] = "Score : ";
     strcat(score,number);
 
-    // Couleur noire pour le texte (R=0, G=0, B=0)
-    SDL_Color color = {0, 0, 0, 255}; 
+    // Couleur blanche pour le texte (R=255, G=255, B=255)
+    SDL_Color color = {255, 255, 255, 255}; 
     SDL_Surface * ttf_surface = TTF_RenderText_Solid(render->font , score , color);
     SDL_Texture * ttf_texture = SDL_CreateTextureFromSurface(render->renderer , ttf_surface);
 
@@ -123,7 +125,7 @@ static void draw_mini_block(struct render_t *render, SDL_Texture *texture, int n
 
 static void render_next_piece(struct render_t * render, struct game_t * game, int window_w) {
     // Couleur noire pour le texte "Next:"
-    SDL_Color color = {0, 0, 0, 255};
+    SDL_Color color = {255, 255, 255, 255};
     SDL_Surface * surface = TTF_RenderText_Solid(render->font, "Next:", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(render->renderer, surface);
     
@@ -202,9 +204,20 @@ static void render_no_move_or_time(struct render_t * render, struct game_t * gam
     int tile_w = window_w / game->width;
     int tile_h = (window_h - hud_height) / game->height;
 
-    // 1. On remplit TOUT l'écran en BLANC
-    SDL_SetRenderDrawColor(render->renderer, 255, 255, 255, 255);
+    // 1. On nettoie l'écran (fond noir par défaut en cas de trou)
+    SDL_SetRenderDrawColor(render->renderer, 0, 0, 0, 255);
     SDL_RenderClear(render->renderer);
+    
+    // --- NOUVEAU : DESSIN DES BACKGROUNDS ---
+    // Background du HUD (Zone du haut)
+    SDL_Rect hud_rect = {0, 0, window_w, hud_height};
+    SDL_RenderCopy(render->renderer, render->hud_bg, NULL, &hud_rect);
+
+    // Background de la zone de jeu
+    SDL_Rect grid_rect = {0, hud_height, window_w, window_h - hud_height};
+    SDL_RenderCopy(render->renderer, render->grid_bg, NULL, &grid_rect);
+    // ----------------------------------------
+    
     
     // 2. Dessin de la grille et des blocs
     for(int j=0; j<game->height; j++){
@@ -224,8 +237,8 @@ static void render_no_move_or_time(struct render_t * render, struct game_t * gam
             }
             
             // On dessine le CONTOUR de la case en gris clair pour voir la grille
-            SDL_SetRenderDrawColor(render->renderer, 200, 200, 200, 255); 
-            SDL_RenderDrawRect(render->renderer, &rect);
+            //SDL_SetRenderDrawColor(render->renderer, 200, 200, 200, 255); 
+            //SDL_RenderDrawRect(render->renderer, &rect);
         }
     }
     
@@ -251,6 +264,8 @@ void render_destroy(struct render_t *render) {
     SDL_DestroyTexture(render->red);
     SDL_DestroyTexture(render->yellow);
     SDL_DestroyTexture(render->green);
+    SDL_DestroyTexture(render->hud_bg);
+    SDL_DestroyTexture(render->grid_bg);
 
     TTF_CloseFont(render->font);
 

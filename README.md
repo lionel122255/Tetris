@@ -3,7 +3,7 @@
 <h1>Tetris (C & SDL2)</h1>
 
 <p align="center">
-  <img src="./ressource/Capture d'écran 2026-07-06 094322.png" width="800">
+  <img src="./ressource/Capture d'écran 2026-07-06 111135.png" width="800">
 </p>
 
 **Author:** Lionel DOFONHAKOU
